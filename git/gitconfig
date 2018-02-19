@@ -1,6 +1,6 @@
 [user]
-	email = agross@therightstuff.de
-	name = Alexander Groß
+	email = fs@co-it.eu
+	name = Frank Strieter
 [core]
 	whitespace = cr-at-eol
 	quotepath = false
@@ -66,12 +66,6 @@
 [push]
 	default = simple
 	followTags = true
-[sendemail]
-	from = Alexander Groß <agross@therightstuff.de>
-	smtpencryption = tls
-	smtpserver = smtp.gmail.com
-	smtpuser = agross@therightstuff.de
-	smtpserverport = 587
 [status]
 	#submodulesummary = true
 [rebase]
