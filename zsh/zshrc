@@ -24,3 +24,5 @@ zplug load ${ZSH_VERBOSE/true/--verbose}
 undefine-startup-functions
 
 # vim: set ft=zsh ts=2 sw=2 et:
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
