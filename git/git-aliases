@@ -66,8 +66,8 @@
 
 	# git log.
 	ll   = log
-	l    = log --oneline --max-count=15
-	ld   = log --oneline --max-count=15 --decorate
+	l    = log --oneline --max-count=15 --decorate
+	ld   = log --oneline --max-count=15 
 	lp   = log --patch
 	gl   = log --graph --oneline --decorate --branches --exclude=refs/stash --all
 	# Mnemomic: who did what?

@@ -61,7 +61,7 @@
 [clean]
 	requireForce = false
 [rerere]
-	enabled = true
+	enabled = false
 	autoupdate = true
 [push]
 	default = simple

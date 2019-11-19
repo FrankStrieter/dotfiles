@@ -23,7 +23,7 @@ zplug "$DOTFILES/zsh/themes", \
       as:theme, \
       from:local, \
       defer:1, \
-      use:'agross.zsh-theme'
+      use:'funkyberlin.zsh-theme'
 
 # Load postinit before compinit.
 zplug "$DOTFILES", \
@@ -59,6 +59,8 @@ zplug 'plugins/systemd', \
 zplug 'zdharma/fast-syntax-highlighting', \
       hook-load:'FAST_HIGHLIGHT=()'
 zplug 'Tarrasch/zsh-bd'
+DIRCOLORS_SOLARIZED_ZSH_THEME='256dark'
+zplug 'pinelibg/dircolors-solarized-zsh'
 zplug 'zsh-users/zsh-completions'
 zplug 'plugins/gem', \
       from:oh-my-zsh, \

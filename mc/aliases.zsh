@@ -2,4 +2,4 @@
 
 verbose Setting up $fg[red]mc$reset_color aliases
 
-alias mc='mc --nosubshell'
+alias mc='. /usr/lib/mc/mc-wrapper.sh'
