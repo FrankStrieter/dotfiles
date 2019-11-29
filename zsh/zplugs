@@ -18,8 +18,8 @@ zplug "$DOTFILES", \
       defer:1, \
       use:'**/aliases.zsh'
 
-# Load theme before compinit.
-zplug "$DOTFILES/zsh/themes", \
+ # Load theme before compinit.
+ zplug "$DOTFILES/zsh/themes", \
       as:theme, \
       from:local, \
       defer:1, \
