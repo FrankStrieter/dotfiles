@@ -1,18 +1,21 @@
 (($+commands[fzf])) || (($+commands[fzf-tmux])) || return 0
 
-if (($+commands[rg])) && (($+commands[ruby])); then
-  export FZF_DEFAULT_COMMAND='rg --files --no-messages'
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND -uuu"
-  export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND | only-dir"
+if (($+commands[fd])); then
+  # Explicitly specify the path separator for Cygwin where a natively-comiled
+  # executable outputs backslashes.
+  # https://github.com/sharkdp/fd/issues/153#issuecomment-531548022
+  export FZF_DEFAULT_COMMAND='fd --path-separator=/ --hidden --follow --ignore-case --no-ignore-vcs --exclude .git'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND --type file"
+  export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND --type directory"
 fi
 
 if [[ -n "$FZF_DEFAULT_COMMAND" ]]; then
   _fzf_compgen_path() {
-    eval $FZF_DEFAULT_COMMAND "$1" | with-dir "$1"
+    eval $FZF_DEFAULT_COMMAND "$1"
   }
 
   _fzf_compgen_dir() {
-    eval $FZF_DEFAULT_COMMAND "$1" | only-dir "$1"
+    eval $FZF_DEFAULT_COMMAND --type directory "$1"
   }
 fi
 

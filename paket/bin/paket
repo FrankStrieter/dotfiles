@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+set -e
+
+case "$OS" in
+  Windows*)
+    ./.paket/paket.exe "$@"
+    ;;
+
+  *)
+    mono ./.paket/paket.exe "$@"
+    ;;
+esac

@@ -13,6 +13,10 @@ case $1 in
     command=cleanup
     ;;
 
+  record)
+    command=record
+    ;;
+
   *)
     command=usage
     ;;
@@ -31,6 +35,7 @@ git-training::usage() {
   printf '  config  Manage temporary git configuration\n'
   printf '  logs    Convert shell logs to HTML\n'
   printf '  cleanup Undo Pull Request demo, remove samples, reset VS Code\n'
+  printf '  record  Start recording an asciinema cast to a local file\n'
 
   return 1
 }
@@ -119,8 +124,8 @@ git-training::config() {
 }
 
 git-training::logs() {
-  if [[ "$1" == '--clear' ]]; then
-    rm --interactive -- ~/*_*.zsh\ Trainings.*.log(N.on)
+  if [[ "$1" == '--clean' ]]; then
+    rm --interactive -- ~/*_*-zsh\ Trainings-*.{log,asciinema}(N.on)
     return $?
   fi
 
@@ -130,21 +135,37 @@ git-training::logs() {
   local part=1
   local log
   # Normal files, sorted by name, prevent warning when there are no files.
-  for log in ~/$(date --date="$offset" +%Y%m%d)_*.zsh\ Trainings.*.log(N.on); do
+  for log in ~/$(date --date="$offset" +%Y%m%d)_*-zsh\ Trainings-*.log(N.on); do
     du -h $log
     printf 'Convert part %s? [y/N]\n' $part
     if ! read -qs; then
       continue
     fi
 
-    ansifilter --input "$log" \
-               --output "$HOME/Downloads/Tag $day Teil $part.html" \
-               --html \
-               --doc-title "Tag $day Teil $part" \
-               --encoding utf-8 \
-               --font 'Menlo, Monaco, Consolas, Courier New, monospace'
+    for file in ${log%.*}.*(.); do
+      cp -- "$file" "$HOME/Downloads/Tag $day Teil $part.${file##*.}"
 
-    cp "$log" "$HOME/Downloads/Tag $day Teil $part.log"
+      case ${file##*.} in
+        log)
+          ansifilter --input "$file" \
+                     --output "$HOME/Downloads/Tag $day Teil $part.html" \
+                     --html \
+                     --doc-title "Tag $day Teil $part" \
+                     --encoding utf-8 \
+                     --font 'Menlo, Monaco, Consolas, Courier New, monospace'
+          ;;
+
+        asciinema)
+          # https://github.com/nbedos/termtosvg/issues/97
+          sed -i 's/"idle_time_limit": 1.0/"idle_time_limit": 1/' "$file"
+
+          termtosvg render \
+                    --template window_frame_js \
+                    "$file" \
+                    "$HOME/Downloads/Tag $day Teil $part.svg" \
+          ;;
+      esac
+    done
 
     part=$((part + 1))
   done
@@ -178,6 +199,20 @@ git-training::cleanup() {
        --request DELETE \
        --header "Authorization: token $GITHUB_DELETE_REPO_API_TOKEN" \
        https://api.github.com/repos/agross/archive-bundler
+}
+
+git-training::record() {
+  local newest_log="$(print ~/*-$ITERM_PROFILE-*.log(.On[1]:r))"
+
+  if [[ -z $newest_log ]]; then
+    printf 'Session log file not found\n' >&2
+    exit 1
+  fi
+
+  exec /usr/local/bin/asciinema rec \
+                                --idle-time-limit=1 \
+                                --command "$SHELL --interactive --login" \
+                                $newest_log.asciinema
 }
 
 git-training::$command "$@"
