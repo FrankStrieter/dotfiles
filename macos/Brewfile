@@ -50,9 +50,7 @@ brew 'm-cli'
 brew 'ncdu'
 brew 'nmap'
 brew 'p7zip'
-brew 'ripgrep'
 brew 'shellcheck'
-brew 'shfmt'
 brew 'speedtest_cli'
 brew 'testssl'
 brew 'wakeonlan'
@@ -64,7 +62,7 @@ cask 'anydesk'
 cask 'atext'
 cask 'authy'
 cask 'bartender'
-cask 'banking-4'
+cask 'banking-4x'
 cask 'bettertouchtool'
 cask 'boom-3d'
 cask 'cleanmymac'
@@ -76,7 +74,7 @@ cask 'evernote'
 cask 'flux'
 cask 'google-chrome'
 cask 'google-hangouts'
-# cask 'hosts'
+cask 'hosts'
 cask 'hyperdock'
 cask 'hyperswitch'
 cask 'istat-menus'
@@ -97,5 +95,20 @@ cask 'skype'
 cask 'symboliclinker'
 cask 'teamviewer'
 cask 'xnviewmp'
+
+# Apps from the Mac App Store.
+mas 'Amphetamine', id: 937_984_704
+mas 'Better', id: 1_121_192_229
+mas 'CleanMyDrive', id: 523_620_159
+mas 'EasyRes', id: 688_211_836
+mas 'FruitJuice', id: 671_736_912
+mas 'Microsoft Remote Desktop', id: 1_295_203_466
+mas 'Monosnap', id: 540_348_655
+mas 'Moom', id: 419_330_170
+mas 'PCalc', id: 403_504_866
+mas 'Reeder', id: 880_001_334
+mas 'Trello', id: 1_278_508_951
+mas 'Tweetbot 3', id: 1_384_080_005
+mas 'WhatsApp', id: 1_147_396_723
 
 # vim: set ft=ruby ts=2 sw=2 et:
