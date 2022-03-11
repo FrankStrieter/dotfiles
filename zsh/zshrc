@@ -24,9 +24,6 @@ zinit ice wait lucid \
   zinit snippet OMZ::plugins/docker/_docker
 
 
-ZSH_THEME=dpoggy
-
-zplug-install
 zinit ice wait lucid \
           has:docker-compose \
           if:'[[ -f /proc/syno_cpu_arch || $OSTYPE == linux-gnu* ]]' \
@@ -122,7 +119,7 @@ zinit ice wait lucid &&
   zinit light knu/z
 
 # Load theme before compinit.
-load-local-files '$DOTFILES/zsh/themes/agross.zsh-theme'
+load-local-files '$DOTFILES/zsh/themes/frank.zsh-theme'
 
 autoload -Uz compinit
 compinit
