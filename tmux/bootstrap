@@ -1,11 +1,11 @@
 # shellcheck shell=bash
 
-if [[ "$OSTYPE" == 'mac' ]]; then
+if [[ "$OSTYPE" == darwin* ]]; then
   formula reattach-to-user-namespace
   formula tmux
 fi
 
-[[ "$OSTYPE" == 'windows' ]] && return
+[[ "$OSTYPE" =~ ^(msys|cygwin)$ ]] && return
 
 symlink "$topic/tmux.conf"
 

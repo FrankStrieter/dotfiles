@@ -14,13 +14,13 @@
 # service@instance.service is named service_instance.
 
 set -euo pipefail
-# set -x
 shopt -s extglob
 
 red='\e[1;31m'
 dark_red='\e[0;31m'
 green='\e[1;32m'
 dark_green='\e[0;32m'
+yellow='\e[1;33m'
 bold='\e[1m'
 reset='\e[0m'
 
@@ -31,11 +31,11 @@ inspect-images()
 
   local -a used_images
   mapfile -t used_images < <(docker container \
-                                  ls \
-                                  --no-trunc \
-                                  --format '{{.Image}}' |
-                                  sort |
-                                  uniq)
+                                    ls \
+                                    --no-trunc \
+                                    --format '{{.Image}}' |
+                                    sort |
+                                    uniq)
 
   local image
   for image in "${used_images[@]}"; do
@@ -61,10 +61,10 @@ inspect-images()
       if [[ "$tags_digests" =~ $no_tags_but_repo_digests ]]; then
         local -a containers
         mapfile -t containers < <(docker container \
-                                        ls \
-                                        --no-trunc \
-                                        --format '{{.Names}}' \
-                                        --filter "ancestor=$image")
+                                         ls \
+                                         --no-trunc \
+                                         --format '{{.Names}}' \
+                                         --filter "ancestor=$image")
 
         printf 'Outdated associated containers: %b%s%b\n' \
                "$red" \
@@ -103,9 +103,25 @@ add-restart-command()
     return
   fi
 
-  local script="${service%.service}"
-  script="${script%@*}"
-  script="/var/data/$script/systemd/upgrade"
+  local name="${service%.service}"
+  name="${name%@*}"
+
+  local unit_paths unit_path
+  mapfile -t unit_paths < <(systemctl show --property=FragmentPath --value "$service")
+  unit_path="$(realpath "${unit_paths[0]}")"
+  unit_path="${unit_path%/*}"
+
+  local disabled="$unit_path/.drestart-disabled"
+
+  if [[ -f "$disabled" ]]; then
+    printf 'Upgrades are disabled via: %b%s%b\n' \
+           "$yellow" \
+           "$disabled" \
+           "$reset"
+    return
+  fi
+
+  local script="$unit_path/upgrade"
 
   if [[ -x "$script" ]]; then
     services_add["$service"]="$script"

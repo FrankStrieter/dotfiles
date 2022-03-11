@@ -7,30 +7,133 @@ autoload -Uz $DOTFILES/zsh/functions/startup/*(.:t)
 
 verbose Loading $fg[green]zshrc$reset_color
 
-# Load color support.
-autoload -U colors && colors
+# Load paths and function paths first.
+load-local-files '$DOTFILES/**/(path|fpath).zsh'
 
-# shellcheck disable=SC2034
-ZPLUG_LOADFILE=$DOTFILES/zsh/zplugs
+# Load everything but the path, function path, zprofile and completion files
+# second.
+load-local-files '$DOTFILES/**/(^(path|fpath|zprofile|completion)).zsh'
 
-# Use extended_glob option for zplug subshells. We need to change it for zplug's use tags containing extended globs.
-zstyle ':zplug:config:setopt' only_subshell extended_glob
+zinit-init
 
-if ! zplug-init zplug-apply-unreleased-fixes; then
-  return 1
-fi
+# oh-my-zsh plugins.
+zinit ice wait lucid \
+          has:docker \
+          if:'[[ -f /proc/syno_cpu_arch ]]' \
+          as:completion &&
+  zinit snippet OMZ::plugins/docker/_docker
+
 
 ZSH_THEME=dpoggy
 
 zplug-install
+zinit ice wait lucid \
+          has:docker-compose \
+          if:'[[ -f /proc/syno_cpu_arch || $OSTYPE == linux-gnu* ]]' \
+          as:completion &&
+  zinit snippet OMZ::plugins/docker-compose/_docker-compose
 
-# Need to apply fixes once more after installing because zplug installs itself.
-zplug-apply-unreleased-fixes
+# No wait because loading password-protected keys is interactive.
+zinit ice if:'[[ $OSTYPE != darwin* && -z $SSH_CONNECTION ]]' \
+          atload:'export-ssh-auth-sock-to-windows' &&
+  zinit snippet OMZ::plugins/ssh-agent/ssh-agent.plugin.zsh
 
-# Source plugins and add commands to the PATH.
-zplug load ${ZSH_VERBOSE/true/--verbose}
+zinit ice wait lucid \
+          has:sudo &&
+  zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
 
-# Clean up after ourselves.
+zinit ice wait lucid \
+          has:systemctl &&
+  zinit snippet OMZ::plugins/systemd/systemd.plugin.zsh
+
+zinit ice wait lucid \
+          has:gem &&
+  zinit snippet OMZ::plugins/gem/gem.plugin.zsh
+
+zinit ice wait lucid \
+          atload:'FAST_HIGHLIGHT=(); load-zsh-syntax-highlight' &&
+  zinit light zdharma-continuum/fast-syntax-highlighting
+
+zinit ice wait lucid &&
+  zinit light Tarrasch/zsh-bd
+
+zinit ice wait lucid \
+          if:'[[ ! $ITERM_PROFILE =~ Trainings$ ]] ' &&
+  zinit light zsh-users/zsh-autosuggestions
+
+zinit ice wait lucid &&
+  zinit light zsh-users/zsh-completions
+
+# Required for "sbin" ices.
+zinit light zdharma-continuum/zinit-annex-bin-gem-node
+
+zinit ice wait lucid \
+          has:git \
+          sbin:git-some \
+          cloneopts: &&
+  zinit light grossweber/git-some
+
+zinit ice wait lucid \
+          has:git &&
+  zinit light rapid-git/rapid-git
+
+zinit ice wait lucid \
+          has:git \
+          sbin:git-standup \
+          as:null &&
+  zinit light kamranahmedse/git-standup
+
+# Do not load on Windows while connected through SSH.
+zinit ice wait:'0b' lucid \
+          if:'[[ ! $OSTYPE =~ ^(msys|cygwin)$ ]] || [[ -z $SSH_CONNECTION ]]' \
+          atclone:'./install --bin --no-update-rc --no-bash --no-fish --no-zsh' \
+          atpull:%atclone \
+          atload:'load-fzf && _fzf::git::load' \
+          pick:'bin/fzf*' \
+          multisrc:'shell/*.zsh' \
+          as:program &&
+  zinit light junegunn/fzf
+
+zinit ice wait lucid \
+          if:'[[ $OSTYPE == linux* && ! -f /proc/syno_cpu_arch ]]' \
+          from:gh-r \
+          as:program \
+          mv:'ripgrep* -> rg' \
+          pick:rg/rg &&
+  zinit light BurntSushi/ripgrep
+
+zinit ice wait:'0a' lucid \
+          if:'[[ $CPUTYPE != aarch64 ]]' \
+          from:gh-r \
+          as:program \
+          mv:'fd* -> fd' \
+          pick:fd/fd &&
+  zinit light sharkdp/fd
+
+zinit ice wait lucid \
+          has:git \
+          from:gh-r \
+          as:program &&
+  zinit light so-fancy/diff-so-fancy
+
+zinit ice wait lucid &&
+  zinit light hlissner/zsh-autopair
+zinit ice wait lucid &&
+  zinit light knu/z
+
+# Load theme before compinit.
+load-local-files '$DOTFILES/zsh/themes/agross.zsh-theme'
+
+autoload -Uz compinit
+compinit
+
+# Load completions provided by plugins.
+zinit cdreplay -q
+
+# Load completions after compinit.
+load-local-files '$DOTFILES/**/completion.zsh'
+
+# Cleanup after ourselves.
 undefine-startup-functions
 
 # vim: set ft=zsh ts=2 sw=2 et:

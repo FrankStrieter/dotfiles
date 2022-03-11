@@ -1,5 +1,8 @@
 # Allows to install updates automatically.
-tap 'domt4/autoupdate'
+tap 'homebrew/autoupdate'
+
+# Remove formula and its dependencies with 'brew rmrec <formula>'.
+tap 'ggpeti/rmrec'
 
 # GNU utilities.
 brew 'binutils'
@@ -19,6 +22,7 @@ brew 'gpatch'
 brew 'grep'
 brew 'gzip'
 brew 'make'
+brew 'pidof'
 brew 'rsync'
 brew 'tree'
 brew 'unzip'
@@ -38,10 +42,12 @@ cask 'suspicious-package'
 cask 'webpquicklook'
 
 # FUSE.
-cask 'osxfuse'
-brew 'sshfs'
+tap 'gromgit/homebrew-fuse'
+cask 'macfuse'
+brew 'sshfs-mac'
 
 # Apps without topic directories.
+brew 'bitwarden-cli'
 brew 'curl'
 brew 'httpie'
 # brew 'imagemagick'
@@ -65,10 +71,13 @@ cask 'authy'
 # cask 'banking-4x'
 # cask 'bettertouchtool'
 # cask 'boom-3d'
+
 cask 'cleanmymac'
 cask 'dash'
+cask 'dockmate'
 cask 'dotnet-sdk'
 cask 'double-commander'
+
 cask 'dropbox'
 # cask 'evernote'
 # cask 'flux'
@@ -95,6 +104,5 @@ cask 'skype'
 cask 'symboliclinker'
 cask 'teamviewer'
 # cask 'xnviewmp'
-
 
 # vim: set ft=ruby ts=2 sw=2 et:

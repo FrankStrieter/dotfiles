@@ -2,32 +2,14 @@
 
 autoload -U colors && colors
 
-defaults=(
-  defaults
-  -currentHost
-  write
-  ~/Library/Preferences/ByHost/com.apple.notificationcenterui
-)
-
 function dnd::on() {
-  local enabledAt=$(date -u '+%Y-%m-%d %H:%M:%S +0000')
-
-  $defaults doNotDisturb -boolean true
-  $defaults doNotDisturbDate -date "$enabledAt"
-
-  killall NotificationCenter
+  shortcuts run dnd-on
 
   printf 'DND turned %bon%b\n' "$fg[green]" "$reset_color"
 }
 
 function dnd::off() {
-  $defaults doNotDisturb -boolean false
-  defaults -currentHost \
-           delete \
-           ~/Library/Preferences/ByHost/com.apple.notificationcenterui \
-           doNotDisturbDate
-
-  killall NotificationCenter
+  shortcuts run dnd-off
 
   printf 'DND turned %boff%b\n' "$fg[red]" "$reset_color"
 }
@@ -38,18 +20,36 @@ function dnd::off() {
 }
 
 # Pass any argument to turn off DND.
-if [[ $# -gt 0 ]]; then
+if [[ $# -gt 0 ]] ||
+   [[ $(defaults read com.apple.controlcenter 'NSStatusItem Visible FocusModes') == 1 ]]; then
   killall caffeinate 2> /dev/null
   m volume unmute
   open -a Flux
+  open -a DockMate
   osascript <<< 'tell application "PopClip" to set enabled to true'
+
+  if brew autoupdate status | grep --quiet --invert-match running; then
+    brew autoupdate start
+  fi
+
   dnd::off
 else
   # http://unix.stackexchange.com/a/148698/72946
   # http://stackoverflow.com/a/10408906/149264
   nohup caffeinate -u -t $((9 * 60 * 60)) < /dev/null > /dev/null 2>&1 &disown
-  m volume mute
+
+  if ! scutil --dns | grep --quiet --fixed-strings home.therightstuff.de; then
+    # Only mute while not at home.
+    m volume mute
+  fi
+
   killall Flux 2> /dev/null
+  killall DockMate 2> /dev/null
   osascript <<< 'tell application "PopClip" to set enabled to false'
+
+  if brew autoupdate status | grep --quiet running; then
+    brew autoupdate stop
+  fi
+
   dnd::on
 fi

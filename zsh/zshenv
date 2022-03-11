@@ -14,6 +14,9 @@
 # Files loaded for zsh -c:
 # 1. zshenv
 
+# Load color support.
+autoload -U colors && colors
+
 # ZSH_VERBOSE=true enables logging.
 # ZSH_VERBOSE=true
 
@@ -24,5 +27,7 @@ typeset -xr DOTFILES="$HOME/.dotfiles"
 # Language settings: This variable determines the locale category for any
 # category not specifically selected via a variable starting with `LC_'.
 export LANG=en_US.UTF-8
+
+skip_global_compinit=for-ubuntu
 
 # vim: set ft=zsh ts=2 sw=2 et:

@@ -4,13 +4,13 @@ symlink "$topic/gitconfig"
 symlink "$topic/gitconfig.training"
 symlink "$topic/git-wtfrc"
 
-if [[ "$OSTYPE" == 'mac' ]]; then
+if [[ "$OSTYPE" == darwin* ]]; then
   formula git
   cask beyond-compare
   cask diffmerge
   cask kdiff3
   cask meld
-  cask p4merge
+  cask p4v
   cask fork
   cask gitup
 
@@ -20,9 +20,9 @@ if [[ "$OSTYPE" == 'mac' ]]; then
   formula termtosvg
 fi
 
-local platform_specific=()
+platform_specific=()
 case "$OSTYPE" in
-  mac)
+  darwin*)
     platform_specific=("$topic/platform-specific/macos")
     ;;
 
@@ -33,7 +33,7 @@ esac
 platform_specific+=("$topic/platform-specific/_")
 
 # Find platform-specific and generic configs with generics sorted last.
-local processed=()
+processed=()
 find "${platform_specific[@]}" \
      -name '*.config' \
      -type f \
