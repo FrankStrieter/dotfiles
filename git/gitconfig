@@ -41,7 +41,7 @@
 	rmdir = true
 	findcopiesharder = true
 [merge]
-	tool = diffmerge
+	tool = code
 	log = true
 [mergetool]
 	prompt = false
@@ -49,7 +49,7 @@
 [include]
 	path = ~/.dotfiles/git/git-mergetools
 [diff]
-	tool = diffmerge
+	tool = code
 	renames = copies
 	submodule = log
 	compactionHeuristic = true
