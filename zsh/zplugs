@@ -37,9 +37,6 @@ zplug "$DOTFILES", \
       defer:2, \
       use:'**/completion.zsh'
 
-zplug "/scopatz/nanorc", \
-      hook-build: ./install.sh
-
 # Manage zplug with zplug.
 zplug 'zplug/zplug', \
       hook-build:'zplug --self-manage'

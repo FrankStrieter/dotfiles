@@ -64,11 +64,6 @@ zinit ice wait lucid &&
 # Required for "sbin" ices.
 zinit light zdharma-continuum/zinit-annex-bin-gem-node
 
-zinit ice wait lucid \
-          has:git \
-          sbin:git-some \
-          cloneopts: &&
-  zinit light grossweber/git-some
 
 zinit ice wait lucid \
           has:git &&
@@ -79,6 +74,12 @@ zinit ice wait lucid \
           sbin:git-standup \
           as:null &&
   zinit light kamranahmedse/git-standup
+
+zinit ice wait lucid \
+          atclone:'./install.sh' \
+          atpull:%atclone &&
+  zinit light /scopatz/nanorc
+     
 
 # Do not load on Windows while connected through SSH.
 zinit ice wait:'0b' lucid \
